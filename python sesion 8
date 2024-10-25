@@ -1,0 +1,52 @@
+import pandas as pd
+
+def check_timestamp_completeness(df):
+    # Parse start and end timestamps
+    df['start_timestamp'] = pd.to_datetime(df['startDay'] + ' ' + df['startTime'])
+    df['end_timestamp'] = pd.to_datetime(df['endDay'] + ' ' + df['endTime'])
+    
+    # Define the complete time range for each day and week
+    all_days = set(range(7))  # Represents all days of the week (0: Monday to 6: Sunday)
+    full_day_range = pd.date_range('00:00:00', '23:59:59', freq='S')  # Every second in a day
+    
+    # Initialize the result list
+    completeness_checks = []
+    
+    # Group by (id, id_2) and check completeness for each group
+    for (id_val, id_2_val), group in df.groupby(['id', 'id_2']):
+        # Get the unique days covered by start_timestamp and end_timestamp
+        days_covered = set(group['start_timestamp'].dt.dayofweek) | set(group['end_timestamp'].dt.dayofweek)
+        
+        # Check if all 7 days are covered
+        all_days_covered = days_covered == all_days
+        
+        # Check if each day spans 24 hours
+        full_day_coverage = True
+        for day in all_days:
+            # Filter timestamps for the current day
+            daily_intervals = group[
+                (group['start_timestamp'].dt.dayofweek == day) | 
+                (group['end_timestamp'].dt.dayofweek == day)
+            ]
+            
+            # Concatenate time intervals to verify 24-hour coverage
+            day_range = pd.Series(False, index=full_day_range)
+            for _, row in daily_intervals.iterrows():
+                # Mark covered seconds as True in the day_range
+                start = max(row['start_timestamp'].replace(hour=0, minute=0, second=0), row['start_timestamp'])
+                end = min(row['end_timestamp'].replace(hour=23, minute=59, second=59), row['end_timestamp'])
+                day_range[start.time():end.time()] = True
+            
+            # If any second in the day is not covered, full_day_coverage is False
+            if not day_range.all():
+                full_day_coverage = False
+                break
+        
+        # Determine if there is incomplete data for the (id, id_2) pair
+        completeness_checks.append(((id_val, id_2_val), not (all_days_covered and full_day_coverage)))
+    
+    # Convert results to a boolean Series with a MultiIndex
+    completeness_index = pd.MultiIndex.from_tuples([x[0] for x in completeness_checks], names=["id", "id_2"])
+    completeness_series = pd.Series([x[1] for x in completeness_checks], index=completeness_index)
+    
+    return completeness_series
