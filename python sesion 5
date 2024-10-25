@@ -1,0 +1,20 @@
+import re
+
+def find_all_dates(text):
+    # Regular expression pattern for the three date formats
+    pattern = r"\b(?:\d{2}-\d{2}-\d{4}|\d{2}/\d{2}/\d{4}|\d{4}\.\d{2}\.\d{2})\b"
+    
+    # Find all matches in the text
+    dates = re.findall(pattern, text)
+    
+    return dates
+
+# Example usage
+text = "I was born on 23-08-1994, my friend on 08/23/1994, and another one on 1994.08.23."
+print(find_all_dates(text))
+
+#input
+text = "I was born on 23-08-1994, my friend on 08/23/1994, and another one on 1994.08.23."
+
+#output
+['23-08-1994', '08/23/1994', '1994.08.23']
