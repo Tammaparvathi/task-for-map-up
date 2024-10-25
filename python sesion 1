@@ -1,0 +1,25 @@
+def reverse_in_groups(lst, n):
+    result = []  # Resultant list to store reversed sublists
+    i = 0        # Start index for each group
+
+    while i < len(lst):
+        # Initialize an empty list to hold elements of the current group
+        group = []
+        
+        # Iterate over the next n elements, or until the end of the list
+        for j in range(i, min(i + n, len(lst))):
+            group.insert(0, lst[j])  # Insert elements at the start of group to reverse order
+        
+        # Append the reversed group to the result
+        result.extend(group)
+        
+        # Move to the next group
+        i += n
+
+    return result
+
+
+# Test cases
+print(reverse_in_groups([1, 2, 3, 4, 5, 6, 7, 8], 3))   # Output: [3, 2, 1, 6, 5, 4, 8, 7]
+print(reverse_in_groups([1, 2, 3, 4, 5], 2))           # Output: [2, 1, 4, 3, 5]
+print(reverse_in_groups([10, 20, 30, 40, 50, 60, 70], 4)) # Output: [40, 30, 20, 10, 70, 60, 50]
