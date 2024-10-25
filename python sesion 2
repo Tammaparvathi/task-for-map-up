@@ -1,0 +1,22 @@
+def group_by_length(strings):
+    # Dictionary to store strings grouped by their length
+    length_dict = {}
+
+    # Iterate through each string in the input list
+    for string in strings:
+        length = len(string)  # Get the length of the current string
+        # If the length is not yet a key, add it with an empty list
+        if length not in length_dict:
+            length_dict[length] = []
+        # Append the current string to the list for its length
+        length_dict[length].append(string)
+
+    # Sort the dictionary by key (length) in ascending order and return it
+    return dict(sorted(length_dict.items()))
+
+# Test cases
+print(group_by_length(["apple", "bat", "car", "elephant", "dog", "bear"]))
+# Output: {3: ['bat', 'car', 'dog'], 4: ['bear'], 5: ['apple'], 8: ['elephant']}
+
+print(group_by_length(["one", "two", "three", "four"]))
+# Output: {3: ['one', 'two'], 4: ['four'], 5: ['three']}
