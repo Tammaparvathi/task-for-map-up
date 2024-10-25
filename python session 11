@@ -1,0 +1,28 @@
+import pandas as pd
+
+def find_ids_within_ten_percentage_threshold(df, reference_id):
+    # Step 1: Calculate average distance for each id_start
+    avg_distances = df.groupby('id_start')['distance'].mean()
+    
+    # Step 2: Get the average distance of the reference_id
+    reference_avg_distance = avg_distances.get(reference_id, None)
+    if reference_avg_distance is None:
+        raise ValueError(f"Reference id_start {reference_id} not found in the dataset.")
+    
+    # Step 3: Calculate 10% threshold range
+    lower_bound = reference_avg_distance * 0.9
+    upper_bound = reference_avg_distance * 1.1
+    
+    # Step 4: Filter id_start values within the threshold range
+    ids_within_threshold = avg_distances[
+        (avg_distances >= lower_bound) & (avg_distances <= upper_bound)
+    ].index.tolist()
+    
+    # Step 5: Sort the result and return
+    return sorted(ids_within_threshold)
+
+# Example usage
+# Assuming df is the DataFrame created in Question 10 with 'id_start' and 'distance' columns
+# reference_id = some integer value from the 'id_start' column
+# result = find_ids_within_ten_percentage_threshold(df, reference_id)
+# print(result)
