@@ -1,0 +1,68 @@
+import pandas as pd
+import datetime
+
+# Sample DataFrame from the previous question
+data = {
+    'id_start': [1001400, 1001400, 1001400, 1001400, 1001400, 1001400, 1001400, 1001400, 1001400, 1001400],
+    'id_end': [1001402, 1001404, 1001406, 1001408, 1001410, 1001412, 1001414, 1001416, 1001418, 1001420],
+    'distance': [9.7, 19.9, 24.6, 36.3, 42.4, 53.1, 60.0, 66.2, 73.3, 81.0],
+    'moto': [7.76, 15.92, 19.68, 29.04, 33.92, 42.48, 48.00, 52.96, 58.64, 64.80],
+    'car': [11.64, 23.88, 29.52, 43.56, 49.92, 63.72, 72.00, 79.44, 87.96, 97.20],
+    'rv': [14.55, 29.85, 36.90, 54.45, 63.60, 79.65, 90.00, 99.30, 109.95, 121.50],
+    'bus': [21.34, 43.78, 54.12, 79.86, 93.28, 116.82, 132.00, 145.64, 161.26, 178.20],
+    'truck': [34.92, 71.64, 88.56, 130.68, 152.64, 191.16, 216.00, 238.32, 263.88, 291.60]
+}
+
+df = pd.DataFrame(data)
+
+def calculate_time_based_toll_rates(df):
+    # Define days of the week and time intervals
+    days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
+    # Create sample start and end days and times for demonstration
+    start_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    end_days = ['Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday']
+    start_times = [datetime.time(0, 0), datetime.time(10, 0), datetime.time(18, 0)]
+    end_times = [datetime.time(10, 0), datetime.time(18, 0), datetime.time(23, 59, 59)]
+
+    # Assign random days and times for demonstration
+    import random
+    df['start_day'] = [random.choice(start_days) for _ in range(len(df))]
+    df['end_day'] = [random.choice(end_days) for _ in range(len(df))]
+    df['start_time'] = [random.choice(start_times) for _ in range(len(df))]
+    df['end_time'] = [random.choice(end_times) for _ in range(len(df))]
+
+    # Apply discounts based on time intervals and days
+    for index, row in df.iterrows():
+        start_day = row['start_day']
+        start_time = row['start_time']
+        
+        if start_day in ['Saturday', 'Sunday']:
+            discount_factor = 0.7
+        else:
+            if start_time < datetime.time(10, 0):
+                discount_factor = 0.8
+            elif start_time < datetime.time(18, 0):
+                discount_factor = 1.2
+            else:
+                discount_factor = 0.8
+        
+        # Apply the discount factor to each vehicle type
+        df.at[index, 'moto'] *= discount_factor
+        df.at[index, 'car'] *= discount_factor
+        df.at[index, 'rv'] *= discount_factor
+        df.at[index, 'bus'] *= discount_factor
+        df.at[index, 'truck'] *= discount_factor
+
+    return df
+
+# Calculate the time-based toll rates and store the result in a new DataFrame
+result_df = calculate_time_based_toll_rates(df)
+
+# Display the resulting DataFrame
+print(result_df)
+
+#id_start    id_end  distance  moto   car     rv    bus   truck start_day start_time end_day end_time
+0  1001400  1001402       9.7  6.21  9.31  11.64  17.07  27.94   Monday  00:00:00  Friday 10:00:00
+1  1001400  1001404      19.9  15.92  23.88  29.85  43.78  71.64  Tuesday 10:00:00 Saturday 18:00:00
+...
