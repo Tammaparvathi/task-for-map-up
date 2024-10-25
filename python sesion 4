@@ -1,0 +1,33 @@
+def unique_permutations(nums):
+    def backtrack(path, used):
+        if len(path) == len(nums):
+            result.append(path[:])
+            return
+        for i in range(len(nums)):
+            # Skip duplicates
+            if used[i] or (i > 0 and nums[i] == nums[i - 1] and not used[i - 1]):
+                continue
+            # Mark the number as used
+            used[i] = True
+            path.append(nums[i])
+            backtrack(path, used)
+            # Backtrack
+            path.pop()
+            used[i] = False
+
+    # Sort the list to handle duplicates
+    nums.sort()
+    result = []
+    used = [False] * len(nums)
+    backtrack([], used)
+    return result
+
+# Example usage
+nums = [1, 1, 2]
+print(unique_permutations(nums))
+
+[
+    [1, 1, 2],
+    [1, 2, 1],
+    [2, 1, 1]
+]
