@@ -1,0 +1,29 @@
+import pandas as pd
+
+def calculate_distance_matrix(file_path):
+    # Load the dataset from the CSV file
+    df = pd.read_csv(file_path)
+    
+    # Initialize an empty DataFrame for the distance matrix
+    distance_matrix = pd.DataFrame(index=df['ID'], columns=df['ID'])
+    
+    # Set diagonal values to 0
+    for id in df['ID']:
+        distance_matrix.loc[id, id] = 0
+    
+    # Iterate over all rows and compute cumulative distances
+    for i, row in df.iterrows():
+        for j, next_row in df.iterrows():
+            if i != j:
+                # Calculate the cumulative distance between points
+                cumulative_distance = abs(row['Distance'] - next_row['Distance'])
+                distance_matrix.loc[row['ID'], next_row['ID']] = cumulative_distance
+                distance_matrix.loc[next_row['ID'], row['ID']] = cumulative_distance
+    
+    # Return the resulting distance matrix DataFrame
+    return distance_matrix
+
+# Example of how to use the function with the given CSV file
+file_path = '/mnt/data/file-ku9Q0XSnMeE7xcbHcy8yGUSH'
+result_matrix = calculate_distance_matrix(file_path)
+print(result_matrix)
