@@ -1,0 +1,42 @@
+import pandas as pd
+
+# Sample DataFrame structure from Question 10
+data = {
+    'id_start': [1001400, 1001400, 1001400, 1001400, 1001400, 1001400, 1001400, 1001400, 1001400, 1001400],
+    'id_end': [1001402, 1001404, 1001406, 1001408, 1001410, 1001412, 1001414, 1001416, 1001418, 1001420],
+    'distance': [9.7, 29.9, 45.9, 67.6, 78.7, 94.3, 112.5, 125.7, 139.3, 152.2]  # Sample distances in km
+}
+
+# Create the DataFrame
+df = pd.DataFrame(data)
+
+def calculate_toll_rate(df):
+    # Define rate coefficients for each vehicle type
+    rates = {
+        'moto': 0.8,
+        'car': 1.2,
+        'rv': 1.5,
+        'bus': 2.2,
+        'truck': 3.6
+    }
+    
+    # Calculate toll rates for each vehicle type by multiplying the distance with the rate coefficient
+    for vehicle, rate in rates.items():
+        df[vehicle] = df['distance'] * rate
+    
+    return df
+
+# Calculate the toll rates and display the resulting DataFrame
+result_df = calculate_toll_rate(df)
+print(result_df)
+#id_start   id_end       distance    moto     car      rv     bus    truck
+0    1001400  1001402       9.7    7.76   11.64   14.55   21.34   34.92
+1    1001400  1001404      29.9   23.92   35.88   44.85   65.78  107.64
+2    1001400  1001406      45.9   36.72   55.08   68.85  100.98  165.24
+3    1001400  1001408      67.6   54.08   81.12  101.40  148.72  243.36
+4    1001400  1001410      78.7   62.96   94.44  118.05  173.14  283.32
+5    1001400  1001412      94.3   75.44  113.16  141.45  207.46  339.48
+6    1001400  1001414     112.5   90.00  135.00  168.75  247.50  405.00
+7    1001400  1001416     125.7  100.56  150.84  188.55  276.54  452.52
+8    1001400  1001418     139.3  111.44  167.16  208.95  306.46  501.48
+9    1001400  1001420     152.2  121.76  182.64  228.30  334.84  547.92
